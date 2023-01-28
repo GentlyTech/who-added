@@ -30,6 +30,35 @@ export async function GetPlaylistData(id: string): Promise<PlaylistData | undefi
 }
 
 /**
+ * Returns the JSON metadata of a given playlist ID.
+ * 
+ * Endpoint: https://api.spotify.com/v1/playlists/{playlist_id}
+ * @param id the playlist to retrieve metadata for
+ * @returns the PlaylistData object, or undefined if there was an error
+ */
+export async function GetPlaylistTracks(id: string, offset?: number, limit?: number): Promise<Tracks | undefined> {
+  if (id.length < 1) return undefined;
+  if (offset === undefined) offset = 0;
+  if (limit === undefined) limit = 100;
+
+  let playlistID: string;
+  const URIArray = id.split(":");
+  if (URIArray.length > 1) {
+    playlistID = URIArray[URIArray.length - 1];
+  }
+  else {
+    playlistID = id;
+  }
+
+  try {
+    return (await Spicetify.CosmosAsync.get(`https://api.spotify.com/v1/playlists/${playlistID}/tracks?offset=${offset}&limit=${limit}`));
+  }
+  catch {
+    return undefined;
+  }
+}
+
+/**
  * Takes a context URI and converts it into a pathname.
  * 
  * @param rawUri the URI to convert into a pathname
@@ -81,16 +110,16 @@ export async function GetUserInfo(id: string): Promise<UserInfo | undefined> {
  * @returns the user ID of the person who added the song, or undefined if it was unable to find one
  */
 
-export async function FindUserInPlaylist(trackUri: string, originalPlaylistData: PlaylistData, queryNext?: boolean): Promise<string | undefined> {
-  let playlistData = originalPlaylistData;
+export async function FindUserInPlaylist(trackUri: string, playlistUri: string, queryNext?: boolean): Promise<string | undefined> {
+  let tracks = await GetPlaylistTracks(playlistUri);
   let matchIndex = -1;
 
   while (matchIndex < 0) {
-    if (!playlistData || !playlistData.tracks || !playlistData.tracks.items || playlistData.tracks.items.length < 1) return undefined;
-    matchIndex = playlistData.tracks.items.findIndex(item => item.track.uri === trackUri);
-    if (playlistData.tracks.next.length < 1 || !queryNext) return undefined;
-    playlistData = await Spicetify.CosmosAsync.get(playlistData.tracks.next);
+    if (!tracks || !tracks.items || tracks.items.length < 1) break;
+    matchIndex = tracks.items.findIndex(item => item.track.uri === trackUri);
+    if (matchIndex > -1 || tracks.next.length < 1 || !queryNext) break;
+    tracks = await GetPlaylistTracks(playlistUri, tracks.offset + tracks.limit);
   }
 
-  return playlistData.tracks.items[matchIndex].added_by.id;
+  return tracks && matchIndex > -1 ? tracks.items[matchIndex].added_by.id : undefined;
 }

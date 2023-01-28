@@ -7,35 +7,22 @@ export default function Widget() {
   const [playlistTitle, setPlaylistTitle] = useState("");
   const [avatarSrc, setAvatarSrc] = useState("");
 
+  const clear = () => {
+    setCulprit("");
+    setAvatarSrc("");
+    setPlaylistSrc("");
+    setPlaylistTitle("");
+  }
+
   useEffect(() => {
     const populate = async (data: Spicetify.PlayerState) => {
-      if (!data) {
-        setCulprit("");
-        setPlaylistSrc("");
-        setPlaylistTitle("");
-        setAvatarSrc("");
-        return;
-      }
+      if (!data) return;
       
       const contextUri = data.context_uri;
-      
-      if (!contextUri) {
-        setCulprit("");
-        setPlaylistSrc("");
-        setPlaylistTitle("");
-        setAvatarSrc("");
-        return;
-      }
+      if (!contextUri) return;
 
       const playlistData = await GetPlaylistData(contextUri);
-
-      if (!playlistData) {
-        setCulprit("");
-        setPlaylistSrc("");
-        setPlaylistTitle("");
-        setAvatarSrc("");
-        return;
-      }
+      if (!playlistData) return;
 
       const _playlistTitle = playlistData.name;
       const _playlistSrc = FormatPlaylistURIFromContext(contextUri);
@@ -43,29 +30,13 @@ export default function Widget() {
       if (playlistTitle !== _playlistTitle) setPlaylistTitle(_playlistTitle);
       if (playlistSrc !== _playlistSrc) setPlaylistSrc(_playlistSrc);
 
-      if (!data.track) {
-        setCulprit("");
-        setAvatarSrc("");
-        return;
-      }
-
+      if (!data.track) return;
       const trackUri = data.track.uri;
-
-      const userId = await FindUserInPlaylist(trackUri, playlistData, true);
-
-      if (!userId) {
-        setCulprit("");
-        setAvatarSrc("");
-        return;
-      }
+      const userId = await FindUserInPlaylist(trackUri, contextUri, true);
+      if (!userId) return;
 
       const userInfo = await GetUserInfo(userId);
-
-      if (!userInfo) {
-        setCulprit("");
-        setAvatarSrc("");
-        return;
-      }
+      if (!userInfo) return;
 
       const _culprit = userInfo.display_name;
 
@@ -78,6 +49,7 @@ export default function Widget() {
     }
 
     Spicetify.Player.addEventListener("songchange", async (event) => {
+      clear();
       if (event) await populate(event.data);
     });
 
