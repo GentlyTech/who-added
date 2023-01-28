@@ -8,8 +8,8 @@ export default function Widget() {
   const [avatarSrc, setAvatarSrc] = useState("");
 
   useEffect(() => {
-    Spicetify.Player.addEventListener("songchange", async (event) => {
-      if (!event || !event.data) {
+    const populate = async (data: Spicetify.PlayerState) => {
+      if (!data) {
         setCulprit("");
         setPlaylistSrc("");
         setPlaylistTitle("");
@@ -17,7 +17,7 @@ export default function Widget() {
         return;
       }
       
-      const contextUri = event.data.context_uri;
+      const contextUri = data.context_uri;
       
       if (!contextUri) {
         setCulprit("");
@@ -43,13 +43,13 @@ export default function Widget() {
       if (playlistTitle !== _playlistTitle) setPlaylistTitle(_playlistTitle);
       if (playlistSrc !== _playlistSrc) setPlaylistSrc(_playlistSrc);
 
-      if (!event.data.track) {
+      if (!data.track) {
         setCulprit("");
         setAvatarSrc("");
         return;
       }
 
-      const trackUri = event.data.track.uri;
+      const trackUri = data.track.uri;
 
       const userId = await FindUserInPlaylist(trackUri, playlistData, true);
 
@@ -75,7 +75,13 @@ export default function Widget() {
         const _avatarSrc = userInfo.images[0].url;
         if (avatarSrc !== _avatarSrc) setAvatarSrc(_avatarSrc);
       }
+    }
+
+    Spicetify.Player.addEventListener("songchange", async (event) => {
+      if (event) await populate(event.data);
     });
+
+    populate(Spicetify.Player.data);
 
     return () => {
       Spicetify.Player.removeEventListener("songchange", () => {});
@@ -90,7 +96,7 @@ export default function Widget() {
       {culprit.length > 0 ? 
       <div className="WhoAddedCulpritContainer">
         <h5 className="DullText">Added by </h5>
-        <img src={avatarSrc} width={24} height={24} />
+        <img className="Avatar" src={avatarSrc} width={24} height={24} />
         <h5 className="EmphasisText">{culprit}</h5>
       </div> : null}
     </div>

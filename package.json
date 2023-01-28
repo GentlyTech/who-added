@@ -1,5 +1,6 @@
 {
   "name": "who-added",
+  "description": "Jankly written song blamer",
   "version": "0.1.0",
   "private": true,
   "scripts": {

@@ -71,7 +71,9 @@ export async function GetUserInfo(id: string): Promise<UserInfo | undefined> {
 }
 
 /**
- * Tries to find who added a given song in a playlist;
+ * Tries to find who added a given song in a playlist.
+ * 
+ * I'm sorry for the unlucky soul who reads this code (and Spotify for the API spam).
  * 
  * @param trackUri the URI of the song to search for
  * @param playlistData the PlaylistData that you want to search in
@@ -79,14 +81,16 @@ export async function GetUserInfo(id: string): Promise<UserInfo | undefined> {
  * @returns the user ID of the person who added the song, or undefined if it was unable to find one
  */
 
-export async function FindUserInPlaylist(trackUri: string, playlistData: PlaylistData, queryNext?: boolean): Promise<string | undefined> {
-  if (!playlistData || !playlistData.tracks || !playlistData.tracks.items || playlistData.tracks.items.length < 1) return undefined;
-  const matchIndex = playlistData.tracks.items.findIndex(item => item.track.uri === trackUri);
+export async function FindUserInPlaylist(trackUri: string, originalPlaylistData: PlaylistData, queryNext?: boolean): Promise<string | undefined> {
+  let playlistData = originalPlaylistData;
+  let matchIndex = -1;
 
-  if (matchIndex > -1) {
-    return playlistData.tracks.items[matchIndex].added_by.id;
+  while (matchIndex < 0) {
+    if (!playlistData || !playlistData.tracks || !playlistData.tracks.items || playlistData.tracks.items.length < 1) return undefined;
+    matchIndex = playlistData.tracks.items.findIndex(item => item.track.uri === trackUri);
+    if (playlistData.tracks.next.length < 1 || !queryNext) return undefined;
+    playlistData = await Spicetify.CosmosAsync.get(playlistData.tracks.next);
   }
 
-  if (!queryNext || playlistData.tracks.next.length < 1) return undefined;
-  return FindUserInPlaylist(trackUri, (await Spicetify.CosmosAsync.get(playlistData.tracks.next)), queryNext);
+  return playlistData.tracks.items[matchIndex].added_by.id;
 }

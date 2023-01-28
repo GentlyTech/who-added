@@ -11,6 +11,10 @@
   gap: 0.5rem;
 }
 
+.Avatar {
+  border-radius: 100%;
+}
+
 .DullText {
   color: var(--spice-subtext);
 }
