@@ -2,6 +2,12 @@
  * TODO Maybe add some better error checking
  */
 
+/**
+ * Generates a WidgetData struct given PlayerState data.
+ * 
+ * @param data the PlayerState data that will be used to populate the WidgetData
+ * @returns a new WidgetData struct
+ */
 export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<WidgetData> {
   const widgetData: WidgetData = {
     userInfo: {
@@ -50,12 +56,6 @@ export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<
   }
   
   return widgetData;
-}
-
-export function WidgetDataIncomplete(widgetData?: WidgetData) {
-  if (!widgetData) return true;
-  if (widgetData.playlistData.playlistSrc.length < 1 || widgetData.playlistData.playlistTitle.length < 1 || widgetData.userInfo.culprit.length < 1 || widgetData.userInfo.avatarSrc.length < 1) return true;
-  return false;
 }
 
 /**

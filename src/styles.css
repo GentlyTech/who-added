@@ -1,7 +1,18 @@
+/* Overrides*/
+
+.main-nowPlayingBar-left {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+}
+
+/* Extension Styles */
+
 .WhoAddedWidgetContainer {
   display: flex;
   flex-direction: column;
   align-self: center;
+  order: 1;
   margin-left: 0.5rem;
 }
 
