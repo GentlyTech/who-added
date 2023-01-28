@@ -1,3 +1,14 @@
+interface WidgetData {
+  userInfo: {
+    culprit: string,
+    avatarSrc: string
+  }
+  playlistData: {
+    playlistSrc: string,
+    playlistTitle: string
+  }
+}
+
 interface UserInfo {
   display_name: string;
   external_urls: {

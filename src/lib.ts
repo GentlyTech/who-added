@@ -2,6 +2,62 @@
  * TODO Maybe add some better error checking
  */
 
+export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<WidgetData> {
+  const widgetData: WidgetData = {
+    userInfo: {
+      culprit: "",
+      avatarSrc: ""
+    },
+    playlistData: {
+      playlistTitle: "",
+      playlistSrc: ""
+    }
+  };
+
+  if (data) {
+    const contextUri = data.context_uri;
+
+    if (contextUri) {
+      const playlistData = await GetPlaylistData(contextUri);
+
+      if (playlistData) {
+        const playlistTitle = playlistData.name;
+        const playlistSrc = FormatPlaylistURI(contextUri);
+      
+        widgetData.playlistData.playlistTitle = playlistTitle;
+        widgetData.playlistData.playlistSrc = playlistSrc;
+      
+        if (data.track) {
+          const trackUri = data.track.uri;
+          const userId = await FindUserInPlaylist(trackUri, contextUri, true);
+
+          if (userId) {
+            const userInfo = await GetUserInfo(userId);
+
+            if (userInfo) {
+              const culprit = userInfo.display_name;
+              widgetData.userInfo.culprit = culprit;
+            
+              if (userInfo.images.length > 0) {
+                const avatarSrc = userInfo.images[0].url;
+                widgetData.userInfo.avatarSrc = avatarSrc;
+              }
+            }          
+          }
+        }
+      }
+    }
+  }
+  
+  return widgetData;
+}
+
+export function WidgetDataIncomplete(widgetData?: WidgetData) {
+  if (!widgetData) return true;
+  if (widgetData.playlistData.playlistSrc.length < 1 || widgetData.playlistData.playlistTitle.length < 1 || widgetData.userInfo.culprit.length < 1 || widgetData.userInfo.avatarSrc.length < 1) return true;
+  return false;
+}
+
 /**
  * Returns the JSON metadata of a given playlist ID.
  * 
