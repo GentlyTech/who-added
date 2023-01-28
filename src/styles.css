@@ -1,4 +1,10 @@
 .WhoAddedWidgetContainer {
-  min-width: 50px;
-  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+
+.WhoAddedCulpritContainer {
+  display: flex;
+  flex-direction: row;
 }

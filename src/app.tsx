@@ -4,17 +4,20 @@ import Widget from "./widget";
 import manifest from "../package.json";
 import "./styles.css";
 
-function init(event: Event) {
-  let barElement = document.querySelector(".main-nowPlayingBar-left");
+async function main() {
+  while (!Spicetify?.showNotification) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  let barElement = document.querySelector(".main-nowPlayingWidget-nowPlaying");
 
-  if (!barElement) {
-    console.error(`Unable to load extension ${manifest.name} because the bar element could not be found.`);
-    Spicetify.showNotification("Unable to get parent container because the bar element could not be found", true);
-    return;
+  while (!barElement) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    barElement = document.querySelector(".main-nowPlayingWidget-nowPlaying");
   }
 
   console.log(`Extension ${manifest.name} loaded!`);
-  Spicetify.showNotification("Parent container found!");
+  Spicetify.showNotification(`Extension ${manifest.name} loaded!`);
 
   const root = document.createElement("div");
   root.className += "WhoAddedWidgetContainer";
@@ -24,14 +27,6 @@ function init(event: Event) {
     <Widget />,
     root
   );
-}
-
-async function main() {
-  while (!Spicetify?.showNotification) {
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  
-  window.addEventListener("DOMContentLoaded", init);
 }
 
 export default main;
