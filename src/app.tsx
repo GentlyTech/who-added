@@ -18,7 +18,7 @@ async function main() {
   }
 
   console.log(`Extension ${manifest.name} loaded!`);
-  Spicetify.showNotification(`Extension ${manifest.name} loaded!`);
+  //Spicetify.showNotification(`Extension ${manifest.name} loaded!`);
 
   const root = document.createElement("div");
   root.className += "WhoAddedWidgetContainer";
