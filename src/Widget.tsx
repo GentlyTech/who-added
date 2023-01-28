@@ -1,18 +1,80 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
+import { FindUserInPlaylist, FormatPlaylistURI as FormatPlaylistURIFromContext, GetPlaylistData, GetUserInfo } from "./lib";
 
 export default function Widget() {
   const [culprit, setCulprit] = useState(""); // The user that added the song
   const [playlistSrc, setPlaylistSrc] = useState(""); // The user that added the song
+  const [playlistTitle, setPlaylistTitle] = useState("");
   const [avatarSrc, setAvatarSrc] = useState("");
 
   useEffect(() => {
-    Spicetify.Player.addEventListener("songchange", (event) => {
-      if (!event || !event.data || !event.data.track || !event.data.track.metadata) return;
-      const title = event.data.track.metadata["title"];
-      const contextURL = event.data.context_url;
-      if (playlistSrc !== contextURL) setPlaylistSrc(contextURL);
+    Spicetify.Player.addEventListener("songchange", async (event) => {
+      if (!event || !event.data) {
+        setCulprit("");
+        setPlaylistSrc("");
+        setPlaylistTitle("");
+        setAvatarSrc("");
+        return;
+      }
+      
+      const contextUri = event.data.context_uri;
+      
+      if (!contextUri) {
+        setCulprit("");
+        setPlaylistSrc("");
+        setPlaylistTitle("");
+        setAvatarSrc("");
+        return;
+      }
 
-      Spicetify.showNotification(`Now Playing ${title}`);
+      const playlistData = await GetPlaylistData(contextUri);
+
+      if (!playlistData) {
+        setCulprit("");
+        setPlaylistSrc("");
+        setPlaylistTitle("");
+        setAvatarSrc("");
+        return;
+      }
+
+      const _playlistTitle = playlistData.name;
+      const _playlistSrc = FormatPlaylistURIFromContext(contextUri);
+
+      if (playlistTitle !== _playlistTitle) setPlaylistTitle(_playlistTitle);
+      if (playlistSrc !== _playlistSrc) setPlaylistSrc(_playlistSrc);
+
+      if (!event.data.track) {
+        setCulprit("");
+        setAvatarSrc("");
+        return;
+      }
+
+      const trackUri = event.data.track.uri;
+
+      const userId = await FindUserInPlaylist(trackUri, playlistData, true);
+
+      if (!userId) {
+        setCulprit("");
+        setAvatarSrc("");
+        return;
+      }
+
+      const userInfo = await GetUserInfo(userId);
+
+      if (!userInfo) {
+        setCulprit("");
+        setAvatarSrc("");
+        return;
+      }
+
+      const _culprit = userInfo.display_name;
+
+      if (culprit !== _culprit) setCulprit(_culprit);
+
+      if (userInfo.images.length > 0) {
+        const _avatarSrc = userInfo.images[0].url;
+        if (avatarSrc !== _avatarSrc) setAvatarSrc(_avatarSrc);
+      }
     });
 
     return () => {
@@ -22,14 +84,15 @@ export default function Widget() {
 
   return (
     <div className="WhoAddedWidgetContainer">
+      {playlistSrc.length > 0 ?
+        <h5 className="DullText">From <a className="EmphasisText" href={playlistSrc}>{playlistTitle}</a></h5>
+      : null}
       {culprit.length > 0 ? 
       <div className="WhoAddedCulpritContainer">
-        <img src={avatarSrc} />
-        <h5>Added by {culprit}</h5>
+        <h5 className="DullText">Added by </h5>
+        <img src={avatarSrc} width={24} height={24} />
+        <h5 className="EmphasisText">{culprit}</h5>
       </div> : null}
-      {playlistSrc.length > 0 ?
-        <h5>From {playlistSrc}</h5>
-      : null}
     </div>
   )
 }

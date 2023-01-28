@@ -6,7 +6,7 @@ import manifest from "../package.json";
 import "./styles.css";
 
 async function main() {
-  while (!Spicetify?.showNotification) {
+  while (!Spicetify?.showNotification || !Spicetify.CosmosAsync) {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   

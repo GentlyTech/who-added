@@ -2,9 +2,19 @@
   display: flex;
   flex-direction: column;
   align-self: center;
+  margin-left: 0.5rem;
 }
 
 .WhoAddedCulpritContainer {
   display: flex;
   flex-direction: row;
+  gap: 0.5rem;
+}
+
+.DullText {
+  color: var(--spice-subtext);
+}
+
+.EmphasisText {
+  color: var(--spice-text);
 }
