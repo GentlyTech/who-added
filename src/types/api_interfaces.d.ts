@@ -1,13 +1,13 @@
 interface WidgetData {
   userInfo: {
-    culprit: string,
-    culpritProfileSrc: string,
-    avatarSrc: string
-  }
+    culprit: string;
+    culpritProfileSrc: string;
+    avatarSrc: string;
+  };
   playlistData: {
-    playlistSrc: string,
-    playlistTitle: string
-  }
+    playlistSrc: string;
+    playlistTitle: string;
+  };
 }
 
 interface UserInfo {
