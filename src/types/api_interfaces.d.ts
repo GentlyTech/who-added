@@ -1,6 +1,7 @@
 interface WidgetData {
   userInfo: {
     culprit: string,
+    culpritProfileSrc: string,
     avatarSrc: string
   }
   playlistData: {

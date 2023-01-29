@@ -26,7 +26,7 @@ function App() {
 }
 
 async function main() {
-  while (!Spicetify?.showNotification || !Spicetify.CosmosAsync || !Spicetify.Player) {
+  while (!Spicetify?.showNotification || !Spicetify.CosmosAsync || !Spicetify.Player || !Spicetify.Platform) {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   

@@ -33,3 +33,7 @@
 .EmphasisText {
   color: var(--spice-text);
 }
+
+.Pointer {
+  cursor: pointer;
+}

@@ -20,6 +20,10 @@ export default function Widget({ playerState }: WidgetProps) {
     }
   }, [playerState]);
 
+  const navigate = (pathname: string) => {
+    Spicetify.Platform.History.push(pathname);
+  }
+
   const playlistComponent = () => {
     if (!widgetData || !widgetData.playlistData || !widgetData.playlistData.playlistTitle || widgetData.playlistData.playlistTitle.length < 1) return null;
 
@@ -27,7 +31,7 @@ export default function Widget({ playerState }: WidgetProps) {
       if (widgetData.playlistData.playlistSrc.length < 1) {
         return (<a className="EmphasisText">{widgetData.playlistData.playlistTitle}</a>);
       }
-      return (<a className="EmphasisText" href={widgetData.playlistData.playlistSrc}>{widgetData.playlistData.playlistTitle}</a>);
+      return (<a className="EmphasisText Pointer" onClick={() => navigate(widgetData.playlistData.playlistSrc)}>{widgetData.playlistData.playlistTitle}</a>);
     }
 
     return (
@@ -43,11 +47,18 @@ export default function Widget({ playerState }: WidgetProps) {
       return (<img className="Avatar" src={widgetData.userInfo.avatarSrc} width={24} height={24} />);
     }
 
+    const culpritAnchorLink = () => {
+      if (widgetData.userInfo.culpritProfileSrc.length < 1) {
+        return (<a className="EmphasisText">{widgetData.userInfo.culprit}</a>);
+      }
+      return (<a className="EmphasisText Pointer" onClick={() => navigate(widgetData.userInfo.culpritProfileSrc)}>{widgetData.userInfo.culprit}</a>);
+    }
+
     return (
       <div className="WhoAddedCulpritContainer">
         <h5 className="DullText">Added by</h5>
         {culpritAvatarComponent()}
-        <h5 className="EmphasisText">{widgetData.userInfo.culprit}</h5>
+        {culpritAnchorLink()}
       </div>
     );
   }

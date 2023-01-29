@@ -12,6 +12,7 @@ export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<
   const widgetData: WidgetData = {
     userInfo: {
       culprit: "",
+      culpritProfileSrc: "",
       avatarSrc: ""
     },
     playlistData: {
@@ -28,7 +29,7 @@ export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<
 
       if (playlistData) {
         const playlistTitle = playlistData.name;
-        const playlistSrc = FormatPlaylistURI(contextUri);
+        const playlistSrc = UriToPathname(contextUri);
       
         widgetData.playlistData.playlistTitle = playlistTitle;
         widgetData.playlistData.playlistSrc = playlistSrc;
@@ -41,8 +42,11 @@ export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<
             const userInfo = await GetUserInfo(userId);
 
             if (userInfo) {
-              const culprit = userInfo.display_name;
-              widgetData.userInfo.culprit = culprit;
+              const culpritName = userInfo.display_name;
+              const culpritProfileSrc = UriToPathname(userInfo.uri);
+
+              widgetData.userInfo.culprit = culpritName;
+              widgetData.userInfo.culpritProfileSrc = culpritProfileSrc;
             
               if (userInfo.images.length > 0) {
                 const avatarSrc = userInfo.images[0].url;
@@ -121,7 +125,7 @@ export async function GetPlaylistTracks(id: string, offset?: number, limit?: num
  * @returns a string containing the converted URI, or a blank string if there was a failure
  */
 
-export function FormatPlaylistURI(rawUri: string): string {
+export function UriToPathname(rawUri: string): string {
   const uriArray = rawUri.split(":");
 
   if (uriArray.length < 2) return rawUri;
