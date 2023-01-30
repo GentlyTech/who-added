@@ -1,6 +1,6 @@
 {
   "name": "who-added",
-  "description": "Jankly written song blamer",
+  "description": "Shows which playlist the song is playing from and who added the song to the playlist in the bottom bar.",
   "version": "0.1.0",
   "private": true,
   "scripts": {
