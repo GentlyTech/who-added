@@ -1,42 +1,49 @@
-/**
- * TODO Maybe add some better error checking
- */
+import type {
+  PlatformPlaylistContents,
+  PlatformPlaylistMetadata,
+  PlatformTrack,
+  RESTUserInfo,
+} from "./types/extension/API";
+import type { WidgetData } from "./types/extension/lib";
 
 /**
  * Generates a WidgetData struct given PlayerState data.
- * 
+ *
  * @param data the PlayerState data that will be used to populate the WidgetData
  * @returns a new WidgetData struct
  */
-export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<WidgetData> {
+export async function GenerateWidgetData(
+  data?: Spicetify.PlayerState
+): Promise<WidgetData> {
   const widgetData: WidgetData = {
     userInfo: {
       culprit: "",
       culpritProfileSrc: "",
-      avatarSrc: ""
+      avatarSrc: "",
     },
     playlistData: {
       playlistTitle: "",
-      playlistSrc: ""
-    }
+      playlistSrc: "",
+    },
   };
 
   if (data) {
     const contextUri = data.context_uri;
 
     if (contextUri) {
-      const playlistData = await GetPlaylistData(contextUri);
+      const playlistMetadata = await GetPlaylistMetadata(contextUri);
+      const playlistContents = await GetSongsFromPlaylist(contextUri);
 
-      if (playlistData) {
-        const playlistTitle = playlistData.name;
+      if (playlistMetadata) {
+        const playlistTitle = playlistMetadata.name;
         const playlistSrc = UriToPathname(contextUri);
-      
+
         widgetData.playlistData.playlistTitle = playlistTitle;
         widgetData.playlistData.playlistSrc = playlistSrc;
-      
-        if (data.track) {
+
+        if (data.track && playlistContents) {
           const trackUri = data.track.uri;
-          const userId = await FindUserInPlaylist(trackUri, contextUri, true);
+          const userId = await GetCulprit(trackUri, playlistContents.items);
 
           if (userId) {
             const userInfo = await GetUserInfo(userId);
@@ -47,80 +54,24 @@ export async function GenerateWidgetData(data?: Spicetify.PlayerState): Promise<
 
               widgetData.userInfo.culprit = culpritName;
               widgetData.userInfo.culpritProfileSrc = culpritProfileSrc;
-            
+
               if (userInfo.images.length > 0) {
                 const avatarSrc = userInfo.images[0].url;
                 widgetData.userInfo.avatarSrc = avatarSrc;
               }
-            }          
+            }
           }
         }
       }
     }
   }
-  
+
   return widgetData;
 }
 
 /**
- * Returns the JSON metadata of a given playlist ID.
- * 
- * Endpoint: https://api.spotify.com/v1/playlists/{playlist_id}
- * @param id the playlist to retrieve metadata for
- * @returns the PlaylistData object, or undefined if there was an error
- */
-export async function GetPlaylistData(id: string): Promise<PlaylistData | undefined> {
-  if (id.length < 1) return undefined;
-
-  let playlistID: string;
-  const URIArray = id.split(":");
-  if (URIArray.length > 1) {
-    playlistID = URIArray[URIArray.length - 1];
-  }
-  else {
-    playlistID = id;
-  }
-
-  try {
-    return (await Spicetify.CosmosAsync.get(`https://api.spotify.com/v1/playlists/${playlistID}`));
-  }
-  catch {
-    return undefined;
-  }
-}
-
-/**
- * Returns the JSON metadata of a given playlist ID.
- * 
- * Endpoint: https://api.spotify.com/v1/playlists/{playlist_id}
- * @param id the playlist to retrieve metadata for
- * @returns the PlaylistData object, or undefined if there was an error
- */
-export async function GetPlaylistTracks(id: string, offset?: number, limit?: number): Promise<Tracks | undefined> {
-  if (id.length < 1) return undefined;
-  if (offset === undefined) offset = 0;
-  if (limit === undefined) limit = 100;
-
-  let playlistID: string;
-  const URIArray = id.split(":");
-  if (URIArray.length > 1) {
-    playlistID = URIArray[URIArray.length - 1];
-  }
-  else {
-    playlistID = id;
-  }
-
-  try {
-    return (await Spicetify.CosmosAsync.get(`https://api.spotify.com/v1/playlists/${playlistID}/tracks?offset=${offset}&limit=${limit}`));
-  }
-  catch {
-    return undefined;
-  }
-}
-
-/**
  * Takes a context URI and converts it into a pathname.
- * 
+ *
  * @param rawUri the URI to convert into a pathname
  * @returns a string containing the converted URI, or a blank string if there was a failure
  */
@@ -142,44 +93,89 @@ export function UriToPathname(rawUri: string): string {
 }
 
 /**
- * Returns the JSON metadata of a given user ID.
- * 
- * Endpoint: https://api.spotify.com/v1/users/{user_id}
- * @param id the user to retrieve info for
- * @returns the UserInfo object, or undefined if there was an error
+ * Gets a playlist's metadata using its ID.
+ *
+ * @param id the playlist's ID (can be URI as well)
+ * @returns a PlatformPlaylistMetadata object containing the playlist's metadata, or undefined if there was a failure
  */
-export async function GetUserInfo(id: string): Promise<UserInfo | undefined> {
-  if (id.length < 1) return undefined;
+export async function GetPlaylistMetadata(
+  id: string
+): Promise<PlatformPlaylistMetadata | undefined> {
+  const fullUri = Spicetify.URI.isPlaylistV2(id)
+    ? Spicetify.URI.fromString(id)
+    : Spicetify.URI.playlistV2URI(id);
+  try {
+    return await Spicetify.Platform.PlaylistAPI.getMetadata(fullUri.toURI());
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Gets a playlist's songs using its ID.
+ *
+ * @param id the playlist's ID (can be URI as well)
+ * @returns a PlatformPlaylistContents object containing the playlist's contents, or undefined if there was a failure
+ */
+export async function GetSongsFromPlaylist(
+  id: string
+): Promise<PlatformPlaylistContents | undefined> {
+  const fullUri = Spicetify.URI.isPlaylistV2(id)
+    ? Spicetify.URI.fromString(id)
+    : Spicetify.URI.playlistV2URI(id);
 
   try {
-    return (await Spicetify.CosmosAsync.get(`https://api.spotify.com/v1/users/${id}`));
+    return await Spicetify.Platform.PlaylistAPI.getContents(fullUri.toURI());
+  } catch {
+    return undefined;
   }
-  catch {
+}
+
+/**
+ * Returns the JSON metadata of a given user ID.
+ *
+ * Endpoint: https://api.spotify.com/v1/users/{user_id}
+ * @param id the user to retrieve info for
+ * @returns the RESTUserInfo object, or undefined if there was an error
+ */
+export async function GetUserInfo(
+  id: string
+): Promise<RESTUserInfo | undefined> {
+  const fullUri: Spicetify.URI & { username?: string } = Spicetify.URI.isProfile(id)
+    ? Spicetify.URI.fromString(id)
+    : Spicetify.URI.profileURI(id, []);
+
+  if (!fullUri.username) return undefined;
+
+  try {
+    return await Spicetify.CosmosAsync.get(
+      `https://api.spotify.com/v1/users/${fullUri.username}`
+    );
+  } catch {
     return undefined;
   }
 }
 
 /**
  * Tries to find who added a given song in a playlist.
- * 
- * I'm sorry for the unlucky soul who reads this code (and Spotify for the API spam).
- * 
- * @param trackUri the URI of the song to search for
- * @param playlistData the PlaylistData that you want to search in
- * @param queryNext whether to try searching the next batch of songs (Spotify imposes only querying 100 songs at a time)
- * @returns the user ID of the person who added the song, or undefined if it was unable to find one
+ *
+ * @param trackUri the URI of the song to search for (can be full or just the ID part)
+ * @param tracks the list of songs to search in
+ * @returns the URI of the user who added the song, or undefined if it was unable to find one
  */
 
-export async function FindUserInPlaylist(trackUri: string, playlistUri: string, queryNext?: boolean): Promise<string | undefined> {
-  let tracks = await GetPlaylistTracks(playlistUri);
-  let matchIndex = -1;
+export async function GetCulprit(
+  trackUri: string,
+  tracks: PlatformTrack[]
+): Promise<string | undefined> {
+  const fullUri = Spicetify.URI.isTrack(trackUri)
+    ? Spicetify.URI.fromString(trackUri)
+    : Spicetify.URI.trackURI(trackUri, "00:00", "", false);
+  const trackCandidate = tracks.find((track) => track.uri === fullUri.toURI());
 
-  while (matchIndex < 0) {
-    if (!tracks || !tracks.items || tracks.items.length < 1) break;
-    matchIndex = tracks.items.findIndex(item => item.track.uri === trackUri);
-    if (matchIndex > -1 || tracks.next.length < 1 || !queryNext) break;
-    tracks = await GetPlaylistTracks(playlistUri, tracks.offset + tracks.limit);
+  if (trackCandidate) {
+    return trackCandidate.addedBy.uri;
   }
 
-  return tracks && matchIndex > -1 ? tracks.items[matchIndex].added_by.id : undefined;
+  return undefined;
 }

@@ -16,10 +16,18 @@
   margin-left: 0.5rem;
 }
 
-.WhoAddedCulpritContainer {
+.WhoAddedCulpritContainer, .WhoAddedPlaylistContainer {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.WhoAddedCulpritAnchorContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .Avatar {
@@ -27,10 +35,12 @@
 }
 
 .DullText {
+  white-space: nowrap;
   color: var(--spice-subtext);
 }
 
 .EmphasisText {
+  white-space: nowrap;
   color: var(--spice-text);
 }
 

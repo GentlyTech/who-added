@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { GenerateWidgetData } from "./lib";
 
+import type { WidgetData } from "./types/extension/lib";
+
 interface WidgetProps {
   playerState?: Spicetify.PlayerState
 }
@@ -35,7 +37,10 @@ export default function Widget({ playerState }: WidgetProps) {
     }
 
     return (
-      <h5 className="DullText">From {playlistAnchorLink()}</h5>
+      <div className="WhoAddedPlaylistContainer">
+        <h5 className="DullText">From</h5>
+        <h5>{playlistAnchorLink()}</h5>
+      </div>
     );
   }
 
@@ -47,19 +52,27 @@ export default function Widget({ playerState }: WidgetProps) {
       return (<img className="Avatar" src={widgetData.userInfo.avatarSrc} width={24} height={24} />);
     }
 
-    const culpritAnchorLink = () => {
-      if (widgetData.userInfo.culpritProfileSrc.length < 1) {
-        return (<a className="EmphasisText">{widgetData.userInfo.culprit}</a>);
+    const culpritAnchorContainer = () => {
+      const hasSrc = widgetData.userInfo.culpritProfileSrc.length > 0;
+
+      const onClick = (event: React.MouseEvent<HTMLHeadingElement>) => {
+        if (!hasSrc) return;
+        navigate(widgetData.userInfo.culpritProfileSrc)
       }
-      return (<a className="EmphasisText Pointer" onClick={() => navigate(widgetData.userInfo.culpritProfileSrc)}>{widgetData.userInfo.culprit}</a>);
+
+      return (
+        <h5 className={`WhoAddedCulpritAnchorContainer ${hasSrc ? "Pointer" : ""}`} onClick={onClick}>
+          {culpritAvatarComponent()}
+          <a className="EmphasisText">{widgetData.userInfo.culprit}</a>
+        </h5>
+      );
     }
 
     return (
       <div className="WhoAddedCulpritContainer">
         <h5 className="DullText">Added by</h5>
-        {culpritAvatarComponent()}
-        {culpritAnchorLink()}
-      </div>
+          {culpritAnchorContainer()}
+        </div>
     );
   }
 
