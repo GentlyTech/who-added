@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "spicetify-creator",
-    "build-local": "spicetify-creator --out=marketplace --minify",
+    "build-local": "spicetify-creator --out=../marketplace/WhoAdded --minify",
     "watch": "spicetify-creator --watch"
   },
   "license": "MIT",
