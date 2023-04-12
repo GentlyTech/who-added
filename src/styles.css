@@ -11,9 +11,20 @@
 .WhoAddedWidgetContainer {
   display: flex;
   flex-direction: column;
-  align-self: center;
+  overflow: hidden;
   order: 1;
-  margin-left: 0.5rem;
+  margin: auto 0 auto 0.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 200px;
+}
+
+.WhoAddedWidgetContainer::-webkit-scrollbar {
+  height: 0.2rem;
+}
+
+.WhoAddedWidgetContainer::-webkit-scrollbar-thumb {
+  border-radius: 10px;
 }
 
 .WhoAddedCulpritContainer, .WhoAddedPlaylistContainer {
