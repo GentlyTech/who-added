@@ -9,11 +9,11 @@ const MAX_TRIES: number = 10;
 const EXTENSION_NAME: string = manifest.name;
 
 function App() {
-  const [playerState, setPlayerState] = useState(Spicetify.Player.data);
+  const [playerState, setPlayerState] = useState<Spicetify.PlayerState | undefined>(Spicetify.Player.data);
 
   useEffect(() => {
     Spicetify.Player.addEventListener("songchange", async (event) => {
-      if (event) setPlayerState(event.data);
+      setPlayerState(event?.data);
     });
 
     return () => {

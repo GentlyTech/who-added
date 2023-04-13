@@ -27,28 +27,28 @@ export async function GenerateWidgetData(
     },
   };
 
-  if (data) {
+  if (data != null) {
     const contextUri = data.context_uri;
 
-    if (contextUri) {
+    if (contextUri != null) {
       const playlistMetadata = await GetPlaylistMetadata(contextUri);
       const playlistContents = await GetSongsFromPlaylist(contextUri);
 
-      if (playlistMetadata) {
+      if (playlistMetadata != null) {
         const playlistTitle = playlistMetadata.name;
         const playlistSrc = UriToPathname(contextUri);
 
         widgetData.playlistData.playlistTitle = playlistTitle;
         widgetData.playlistData.playlistSrc = playlistSrc;
 
-        if (data.track && playlistContents) {
+        if (data.track != null && playlistContents != null) {
           const trackUri = data.track.uri;
           const userId = await GetCulprit(trackUri, playlistContents.items);
 
-          if (userId) {
+          if (userId != null) {
             const userInfo = await GetUserInfo(userId);
 
-            if (userInfo) {
+            if (userInfo != null) {
               const culpritName = userInfo.display_name;
               const culpritProfileSrc = UriToPathname(userInfo.uri);
 
@@ -92,6 +92,15 @@ export function UriToPathname(rawUri: string): string {
   return finalUri;
 }
 
+export function NewPlaylistV2URI(id: string) {
+  try {
+    return Spicetify.URI.fromString(`spotify:playlist:${id}`);
+  }
+  catch {
+    return undefined;
+  }
+}
+
 /**
  * Gets a playlist's metadata using its ID.
  *
@@ -103,7 +112,10 @@ export async function GetPlaylistMetadata(
 ): Promise<PlatformPlaylistMetadata | undefined> {
   const fullUri = Spicetify.URI.isPlaylistV2(id)
     ? Spicetify.URI.fromString(id)
-    : Spicetify.URI.playlistV2URI(id);
+    : NewPlaylistV2URI(id);
+
+  if (fullUri == null) return undefined;
+
   try {
     return await Spicetify.Platform.PlaylistAPI.getMetadata(fullUri.toURI());
   } catch {
@@ -122,7 +134,9 @@ export async function GetSongsFromPlaylist(
 ): Promise<PlatformPlaylistContents | undefined> {
   const fullUri = Spicetify.URI.isPlaylistV2(id)
     ? Spicetify.URI.fromString(id)
-    : Spicetify.URI.playlistV2URI(id);
+    : NewPlaylistV2URI(id);
+
+  if (fullUri == null) return undefined;
 
   try {
     return await Spicetify.Platform.PlaylistAPI.getContents(fullUri.toURI());
