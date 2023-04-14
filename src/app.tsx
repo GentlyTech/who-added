@@ -59,7 +59,7 @@ async function main() {
   //Spicetify.showNotification(`Extension ${manifest.name} loaded!`);
 
   let root = document.createElement("div");
-  root.className += "WhoAddedWidgetContainer";
+  root.className += "WhoAddedWidgetRootContainer";
   barElement.appendChild(root);
 
   ReactDOM.render(

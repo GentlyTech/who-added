@@ -6,25 +6,30 @@
   align-items: center !important;
 }
 
+.main-nowPlayingWidget-nowPlaying {
+  flex-shrink: 0;
+}
+
 /* Extension Styles */
+
+.WhoAddedWidgetRootContainer {
+  width: 100%;
+  order: 1;
+  margin: auto 0 auto 0.5rem;
+  overflow: hidden;
+}
+
+.WhoAddedWidgetRootContainer::-webkit-scrollbar {
+  height: 0.2rem;
+}
+
+.WhoAddedWidgetRootContainer::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
 
 .WhoAddedWidgetContainer {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  order: 1;
-  margin: auto 0 auto 0.5rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 200px;
-}
-
-.WhoAddedWidgetContainer::-webkit-scrollbar {
-  height: 0.2rem;
-}
-
-.WhoAddedWidgetContainer::-webkit-scrollbar-thumb {
-  border-radius: 10px;
 }
 
 .WhoAddedCulpritContainer, .WhoAddedPlaylistContainer {
