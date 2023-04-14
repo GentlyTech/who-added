@@ -92,15 +92,6 @@ export function UriToPathname(rawUri: string): string {
   return finalUri;
 }
 
-export function NewPlaylistV2URI(id: string) {
-  try {
-    return Spicetify.URI.fromString(`spotify:playlist:${id}`);
-  }
-  catch {
-    return undefined;
-  }
-}
-
 /**
  * Gets a playlist's metadata using its ID.
  *
@@ -112,7 +103,7 @@ export async function GetPlaylistMetadata(
 ): Promise<PlatformPlaylistMetadata | undefined> {
   const fullUri = Spicetify.URI.isPlaylistV2(id)
     ? Spicetify.URI.fromString(id)
-    : NewPlaylistV2URI(id);
+    : undefined;
 
   if (fullUri == null) return undefined;
 
@@ -134,7 +125,7 @@ export async function GetSongsFromPlaylist(
 ): Promise<PlatformPlaylistContents | undefined> {
   const fullUri = Spicetify.URI.isPlaylistV2(id)
     ? Spicetify.URI.fromString(id)
-    : NewPlaylistV2URI(id);
+    : undefined;
 
   if (fullUri == null) return undefined;
 
