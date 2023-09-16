@@ -28,7 +28,7 @@ export async function GenerateWidgetData(
   };
 
   if (data != null) {
-    const contextUri = data.context_uri;
+    const contextUri = data.context.uri;
 
     if (contextUri != null) {
       const playlistMetadata = await GetPlaylistMetadata(contextUri);
@@ -63,6 +63,9 @@ export async function GenerateWidgetData(
           }
         }
       }
+    }
+    else {
+      console.error("context data was null");
     }
   }
 
