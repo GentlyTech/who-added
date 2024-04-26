@@ -41,8 +41,8 @@ export async function GenerateWidgetData(
         widgetData.playlistData.playlistTitle = playlistTitle;
         widgetData.playlistData.playlistSrc = playlistSrc;
 
-        if (data.track != null && playlistContents != null) {
-          const trackUri = data.track.uri;
+        if (data.item != null && playlistContents != null) {
+          const trackUri = data.item.uri;
           const userId = await GetCulprit(trackUri, playlistContents.items);
 
           if (userId != null) {
