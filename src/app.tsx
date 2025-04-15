@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
 
 import Widget from "./Widget";
 import manifest from "../package.json";
 import "./styles.css";
 
+const INJECTION_TARGET: string = ".main-nowPlayingWidget-nowPlaying"; // The selector type is needed (e.g. period for classname and hashtag for id)
 const MAX_TRIES: number = 10;
 const EXTENSION_NAME: string = manifest.name;
 
@@ -42,29 +42,29 @@ async function main() {
   }
   
   tries = 0;
-  let barElement = document.querySelector(".main-nowPlayingBar-left");
+  let injectionTargetDOM = document.querySelector(INJECTION_TARGET);
 
-  while (!barElement) {
+  while (!injectionTargetDOM) {
     if (tries >= MAX_TRIES) {
       console.error(`[${EXTENSION_NAME}] Could not find the target element to inject into in a reasonable amount of time. Aborting...`);
       return -1;
     }
 
     await new Promise(resolve => setTimeout(resolve, 1000));
-    barElement = document.querySelector(".main-nowPlayingBar-left");
+    injectionTargetDOM = document.querySelector(INJECTION_TARGET);
     tries++;
   }
 
   console.log(`[${EXTENSION_NAME}] Extension loaded!`);
-  //Spicetify.showNotification(`Extension ${manifest.name} loaded!`);
 
-  let root = document.createElement("div");
-  root.className += "WhoAddedWidgetRootContainer";
-  barElement.appendChild(root);
+  let rootContainer = document.createElement("div");
+  rootContainer.className += "WhoAddedRootContainer";
+  injectionTargetDOM.appendChild(rootContainer);
 
-  ReactDOM.render(
-    <App />,
-    root
+  const root = Spicetify.ReactDOM.createRoot(rootContainer);
+
+  root.render(
+    <App />
   );
 }
 
