@@ -6,6 +6,8 @@ import type {
 } from "./types/extension/API";
 import type { WidgetData } from "./types/extension/lib";
 
+import { EXTENSION_NAME } from "./globals";
+
 /**
  * Generates a WidgetData struct given PlayerState data.
  *
@@ -30,7 +32,16 @@ export async function GenerateWidgetData(
   if (data != null) {
     const contextUri = data.context.uri;
 
+    console.log(`[${EXTENSION_NAME}] Context URI: ${contextUri}`);
+
+    // TODO maybe consider extracting some of these lines into separate functions
+
     if (contextUri != null) {
+      if (isLikedSongsPlaylist(contextUri)) { // Short circuit if playlist is the user's liked songs playlist
+        // TODO implement
+        return widgetData;
+      }
+
       const playlistMetadata = await GetPlaylistMetadata(contextUri);
       const playlistContents = await GetSongsFromPlaylist(contextUri);
 
