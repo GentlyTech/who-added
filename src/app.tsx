@@ -14,7 +14,7 @@ const MAX_TRIES: number = 10;
 const EXTENSION_NAME: string = manifest.name;
 
 function App() {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const [playerState, setPlayerState] = useState<Spicetify.PlayerState | undefined>(Spicetify.Player.data);
   const toggleButtonRef: MutableRefObject<HTMLButtonElement | null> = useRef(null);
   const injectionTargetRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
