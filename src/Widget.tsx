@@ -27,7 +27,7 @@ export default function Widget({ open, playerState }: WidgetProps) {
     Spicetify.Platform.History.push(pathname);
   }
 
-  const playlistComponent = () => {
+  const playlistComponent = (() => {
     if (!widgetData || !widgetData.playlistData || !widgetData.playlistData.playlistTitle || widgetData.playlistData.playlistTitle.length < 1) return null;
 
     const playlistAnchorLink = () => {
@@ -43,9 +43,9 @@ export default function Widget({ open, playerState }: WidgetProps) {
         <h5>{playlistAnchorLink()}</h5>
       </div>
     );
-  }
+  })();
 
-  const culpritComponent = () => {
+  const culpritComponent = (() => {
     if (!widgetData || !widgetData.userInfo || !widgetData.userInfo.culprit || widgetData.userInfo.culprit.length < 1) return null;
 
     const culpritAvatarComponent = () => {
@@ -75,13 +75,29 @@ export default function Widget({ open, playerState }: WidgetProps) {
           {culpritAnchorContainer()}
         </div>
     );
+  })();
+
+  const result = () => {
+    if (!playlistComponent && !culpritComponent) {
+      return (
+        <div className="DullText Error">
+          No information for this track.
+        </div>
+      );
+    }
+
+    return (
+      <>
+          {playlistComponent}
+          {culpritComponent}
+      </>
+    )
   }
 
   return open ? (
     <div className="WhoAddedWidgetContainer">
       <span className="Title">Who Added?</span>
-      {playlistComponent()}
-      {culpritComponent()}
+      {result()}
     </div>
   ) : null;
 }
