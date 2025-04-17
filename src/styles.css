@@ -6,30 +6,36 @@
   align-items: center !important;
 }
 
-.main-nowPlayingWidget-nowPlaying {
-  flex-shrink: 0;
-}
-
 /* Extension Styles */
 
-.WhoAddedWidgetRootContainer {
-  width: 100%;
-  order: 1;
-  margin: auto 0 auto 0.5rem;
+.WhoAddedButtonContainer {
+  flex-shrink: 0;
   overflow: hidden;
+  margin: auto 0 auto 0.25rem;
 }
 
-.WhoAddedWidgetRootContainer::-webkit-scrollbar {
-  height: 0.2rem;
+.ToggleButton {
+  min-width: 0;
+  margin: auto;
+  background: none;
+  border: none;
+  color: #aaaaaa;
+  cursor: pointer;
+  transition: color 100ms linear;
 }
 
-.WhoAddedWidgetRootContainer::-webkit-scrollbar-thumb {
-  border-radius: 10px;
+.ToggleButton:hover {
+  color: white;
 }
 
 .WhoAddedWidgetContainer {
-  display: flex;
-  flex-direction: column;
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  background: black;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 300px;
 }
 
 .WhoAddedCulpritContainer, .WhoAddedPlaylistContainer {
@@ -62,4 +68,11 @@
 
 .Pointer {
   cursor: pointer;
+}
+
+.Title {
+  font-size: 16px;
+  font-family: sans-serif;
+  font-weight: bold;
+  color: white;
 }

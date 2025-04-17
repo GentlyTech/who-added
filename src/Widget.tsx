@@ -4,10 +4,11 @@ import { GenerateWidgetData } from "./lib";
 import type { WidgetData } from "./types/extension/lib";
 
 interface WidgetProps {
-  playerState?: Spicetify.PlayerState
+  open: boolean;
+  playerState?: Spicetify.PlayerState;
 }
 
-export default function Widget({ playerState }: WidgetProps) {
+export default function Widget({ open, playerState }: WidgetProps) {
   const [widgetData, updateWidgetData] = useState(undefined as unknown as WidgetData);
 
   useEffect(() => {
@@ -76,10 +77,11 @@ export default function Widget({ playerState }: WidgetProps) {
     );
   }
 
-  return (
+  return open ? (
     <div className="WhoAddedWidgetContainer">
+      <span className="Title">Who Added?</span>
       {playlistComponent()}
       {culpritComponent()}
     </div>
-  )
+  ) : null;
 }
