@@ -18,3 +18,10 @@ npm run build-local
 - The extension will be output in `../marketplace/WhoAdded` by default. You can change this by editing `package.json` -> `scripts` -> `build-local` and setting the `--out=` parameter to a path of your choice.
 
 - You will need the `spicetify-creator` npm package (but this should be handled automatically when you run `npm install`).
+
+## TODO
+
+- [] Remember whether widget should be open or not on app launch
+- [] Fix data retrieval when song is played from "Liked Songs" playlist
+- [] Fix data retrieval when song is quick-played via folder
+- [] Add full screen support
