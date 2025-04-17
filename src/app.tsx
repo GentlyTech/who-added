@@ -9,7 +9,7 @@ import "./styles.css";
 import "./colors.css";
 
 const BUTTON_INJECTION_TARGET: string = ".main-nowPlayingWidget-nowPlaying"; // The selector type is needed (e.g. period for classname and hashtag for id)
-const WIDGET_INJECTION_TARGET: string = ".Root__main-view-overlay"; // The selector type is needed (e.g. period for classname and hashtag for id)
+const WIDGET_INJECTION_TARGET: string = ".main-navBar-mainNav"; // The selector type is needed (e.g. period for classname and hashtag for id)
 const MAX_TRIES: number = 10;
 const EXTENSION_NAME: string = manifest.name;
 
