@@ -96,6 +96,16 @@ export function UriToPathname(rawUri: string): string {
 }
 
 /**
+ * Checks whether the given context URI is the user's "Liked Songs" playlist.
+ * 
+ * This is needed because the user's liked songs is a built-in playlist, which has its own special URI.
+ * 
+ */
+export function isLikedSongsPlaylist(contextUri: string) {
+  return contextUri.endsWith("collection"); // FIXME maybe come up with a better solution (although this does suffice)
+}
+
+/**
  * Gets a playlist's metadata using its ID.
  *
  * @param id the playlist's ID (can be URI as well)
