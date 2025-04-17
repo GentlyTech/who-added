@@ -1,17 +1,12 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, WIDGET_INJECTION_TARGET } from "./globals";
 import { InfoIcon } from "../assets/InfoIcon";
 import Widget from "./Widget";
-import manifest from "../package.json";
 
 import "./styles.css";
 import "./colors.css";
-
-const BUTTON_INJECTION_TARGET: string = ".main-nowPlayingWidget-nowPlaying"; // The selector type is needed (e.g. period for classname and hashtag for id)
-const WIDGET_INJECTION_TARGET: string = ".main-navBar-mainNav"; // The selector type is needed (e.g. period for classname and hashtag for id)
-const MAX_TRIES: number = 10;
-const EXTENSION_NAME: string = manifest.name;
 
 function App() {
   const [open, setOpen] = useState<boolean>(true);
