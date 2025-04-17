@@ -1,10 +1,12 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
+import { InfoIcon } from "../assets/InfoIcon";
 import Widget from "./Widget";
 import manifest from "../package.json";
+
 import "./styles.css";
-import { InfoIcon } from "../assets/InfoIcon";
-import { createPortal } from "react-dom";
+import "./colors.css";
 
 const BUTTON_INJECTION_TARGET: string = ".main-nowPlayingWidget-nowPlaying"; // The selector type is needed (e.g. period for classname and hashtag for id)
 const WIDGET_INJECTION_TARGET: string = ".Root__main-view-overlay"; // The selector type is needed (e.g. period for classname and hashtag for id)
