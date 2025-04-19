@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { GenerateWidgetData } from "./lib";
 
 import type { WidgetData } from "./types/extension/lib";
+import useClassNames from "./hooks/useClassNames";
 
 interface WidgetProps {
   open: boolean;
+  peek?: boolean;
   playerState?: Spicetify.PlayerState;
 }
 
-export default function Widget({ open, playerState }: WidgetProps) {
+export default function Widget({ open, peek, playerState }: WidgetProps) {
+  const classNames = useClassNames("WhoAddedWidgetContainer", peek ? "SeeThrough" : undefined);
   const [widgetData, updateWidgetData] = useState(undefined as unknown as WidgetData);
 
   useEffect(() => {
@@ -88,14 +91,14 @@ export default function Widget({ open, playerState }: WidgetProps) {
 
     return (
       <>
-          {playlistComponent}
-          {culpritComponent}
+        {playlistComponent}
+        {culpritComponent}
       </>
     )
   }
 
   return open ? (
-    <div className="WhoAddedWidgetContainer">
+    <div className={classNames}>
       <span className="Title">Who Added?</span>
       {result()}
     </div>

@@ -1,7 +1,7 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, WIDGET_INJECTION_TARGET } from "./globals";
+import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, PEEK_DETECTION_TARGET, WIDGET_INJECTION_TARGET } from "./globals";
 import { InfoIcon } from "../assets/InfoIcon";
 import Widget from "./Widget";
 
@@ -10,9 +10,11 @@ import "./colors.css";
 
 function App() {
   const [open, setOpen] = useState<boolean>(true);
+  const [peek, setPeek] = useState<boolean>(false);
   const [playerState, setPlayerState] = useState<Spicetify.PlayerState | undefined>(Spicetify.Player.data);
   const toggleButtonRef: MutableRefObject<HTMLButtonElement | null> = useRef(null);
   const injectionTargetRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
+  const peekDetectionTargetRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
 
   useEffect(() => {
     Spicetify.Player.addEventListener("songchange", async (event) => {
@@ -30,12 +32,30 @@ function App() {
   });
 
   useEffect(() => {
-    const target: HTMLDivElement | null = document.querySelector(WIDGET_INJECTION_TARGET);
-    if (target == null) return;
-    injectionTargetRef.current = target;
+    function onHoverUnhover(event: MouseEvent) {
+      setPeek(event.type == "mouseenter");
+    }
+
+    const injectionTarget: HTMLDivElement | null = document.querySelector(WIDGET_INJECTION_TARGET);
+    if (injectionTarget != null) {
+      injectionTargetRef.current = injectionTarget;
+    }
+    
+    const peekDetectionTarget: HTMLDivElement | null = document.querySelector(PEEK_DETECTION_TARGET);
+    if (peekDetectionTarget != null) {
+      peekDetectionTargetRef.current = peekDetectionTarget;
+      peekDetectionTargetRef.current.addEventListener("mouseenter", onHoverUnhover);
+      peekDetectionTargetRef.current.addEventListener("mouseleave", onHoverUnhover);
+    }
 
     return () => {
       injectionTargetRef.current = null;
+
+      if (peekDetectionTargetRef.current != null) {
+        peekDetectionTargetRef.current.removeEventListener("mouseenter", onHoverUnhover);
+        peekDetectionTargetRef.current.removeEventListener("mouseleave", onHoverUnhover);
+      }
+      peekDetectionTargetRef.current = null;
     }
   });
 
@@ -45,7 +65,7 @@ function App() {
 
   return (
     <>
-      {injectionTargetRef.current != null ? createPortal(<Widget open={open} playerState={playerState} />, injectionTargetRef.current) : null}
+      {injectionTargetRef.current != null ? createPortal(<Widget open={open} peek={peek} playerState={playerState} />, injectionTargetRef.current) : null}
       <button ref={toggleButtonRef} className="ToggleButton" onClick={onToggleButtonClick}>{InfoIcon}</button>
     </>
   );
