@@ -9,7 +9,7 @@ const EXCLUDED_METHODS = [
   "valueOf"
 ]
 
-const MAX_DEPTH = 16;
+const MAX_DEPTH = 4;
 
 const ObjectMapper = {
   /**
