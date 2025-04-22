@@ -3,10 +3,10 @@ import type {
   PlatformPlaylistMetadata,
   PlatformTrack,
   RESTUserInfo,
-} from "./types/extension/API";
-import type { WidgetData } from "./types/extension/lib";
+} from "../types/extension/API";
+import type { WidgetData } from "../types/extension/lib";
 
-import { EXTENSION_NAME } from "./globals";
+import { EXTENSION_NAME } from "./Globals";
 
 /**
  * Generates a WidgetData struct given PlayerState data.

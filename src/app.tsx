@@ -1,12 +1,12 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, PEEK_DETECTION_TARGET, WIDGET_INJECTION_TARGET } from "./globals";
+import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, PEEK_DETECTION_TARGET, WIDGET_INJECTION_TARGET } from "./lib/Globals";
 import { InfoIcon } from "../assets/InfoIcon";
-import Widget from "./Widget";
+import Widget from "./components/Widget/Widget";
 
-import "./styles.css";
-import "./colors.css";
+import "./styles/common.css";
+import "./styles/colors.css";
 
 function App() {
   const [open, setOpen] = useState<boolean>(true);

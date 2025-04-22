@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { GenerateWidgetData } from "./lib";
+import { GenerateWidgetData } from "../../lib/APIWrapper";
 
-import type { WidgetData } from "./types/extension/lib";
-import useClassNames from "./hooks/useClassNames";
+import type { WidgetData } from "../../types/extension/lib";
+import useClassNames from "../../hooks/useClassNames";
 
-import { LikedSongsIcon } from "../assets/LikedSongsIcon";
+import { LikedSongsIcon } from "../../../assets/LikedSongsIcon";
+import "./Widget.css";
 
 interface WidgetProps {
   open: boolean;

@@ -1,0 +1,25 @@
+.WhoAddedWidgetContainer {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  background: black;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 300px;
+
+  transition: opacity 150ms linear;
+}
+
+.WhoAddedCulpritContainer, .WhoAddedPlaylistContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.WhoAddedCulpritAnchorContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+}
