@@ -9,6 +9,7 @@ const EXCLUDED_METHODS = [
   "valueOf"
 ]
 
+const MAX_PROPERTIES = 1024; // Replace objects with more than this number of keys with an empty object
 const MAX_DEPTH = 4;
 
 const ObjectMapper = {
@@ -24,6 +25,9 @@ const ObjectMapper = {
     if (obj == null) return result;
 
     const properties = Object.getOwnPropertyNames(obj);
+
+    if (properties.length > MAX_PROPERTIES) return result;
+
     const proto = Object.getPrototypeOf(obj);
 
     for (const property of properties) {
@@ -34,6 +38,17 @@ const ObjectMapper = {
   
         if (propertyType == "object" && depth < MAX_DEPTH) {
           result[property] = ObjectMapper._MapObjectToInterfaceRecursive(obj[property], includePrivate, depth + 1);
+          continue;
+        }
+
+        if (propertyType == "function") {
+          /** @type {number} */
+          const numParams = obj[property].length;
+          const params = [];
+          for (let i = 0; i < numParams; i++) {
+            params.push(`p${i}`);
+          }
+          result[property] = `(${params.join(", ")}) => any`;
           continue;
         }
   
