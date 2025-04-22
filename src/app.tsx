@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, PEEK_DETECTION_TARGET, WIDGET_INJECTION_TARGET } from "./lib/Globals";
 import { InfoIcon } from "../assets/InfoIcon";
 import Widget from "./components/Widget/Widget";
+import { Settings } from "./lib/Settings";
 
 import "./styles/common.css";
 import "./styles/colors.css";
