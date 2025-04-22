@@ -4,6 +4,8 @@ import { GenerateWidgetData } from "./lib";
 import type { WidgetData } from "./types/extension/lib";
 import useClassNames from "./hooks/useClassNames";
 
+import { LikedSongsIcon } from "../assets/LikedSongsIcon";
+
 interface WidgetProps {
   open: boolean;
   peek?: boolean;
