@@ -26,6 +26,7 @@ export async function GenerateWidgetData(
     playlistData: {
       playlistTitle: "",
       playlistSrc: "",
+      playlistArtSrc: ""
     },
   };
 

@@ -7,5 +7,6 @@ export interface WidgetData {
   playlistData: {
     playlistSrc: string;
     playlistTitle: string;
+    playlistArtSrc: string;
   };
 }
