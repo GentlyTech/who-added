@@ -7,6 +7,7 @@ import type {
 import type { WidgetData } from "../types/extension/WidgetData";
 
 import { EXTENSION_NAME } from "./Globals";
+import { LikedSongsIcon } from "../../assets/LikedSongsIcon";
 
 /**
  * Generates a WidgetData struct given PlayerState data.
@@ -39,7 +40,16 @@ export async function GenerateWidgetData(
 
     if (contextUri != null) {
       if (isLikedSongsPlaylist(contextUri)) { // Short circuit if playlist is the user's liked songs playlist
-        // TODO implement
+        widgetData.playlistData.playlistTitle = "Liked Songs"; // TODO localize this
+        widgetData.playlistData.playlistSrc = UriToPathname(contextUri);
+        widgetData.playlistData.playlistArtSrc = LikedSongsIcon;
+        return widgetData;
+      }
+
+      if (isFolder(contextUri)) { // Short circuit if playlist is a folder
+        // TODO actually populate with respective folder's data
+        widgetData.playlistData.playlistTitle = "Folder";
+        widgetData.playlistData.playlistSrc = UriToPathname(contextUri);
         return widgetData;
       }
 
@@ -49,9 +59,11 @@ export async function GenerateWidgetData(
       if (playlistMetadata != null) {
         const playlistTitle = playlistMetadata.name;
         const playlistSrc = UriToPathname(contextUri);
+        const playlistAlbumArtSrc = playlistMetadata.images.length > 0 ? playlistMetadata.images[0].url : "";
 
         widgetData.playlistData.playlistTitle = playlistTitle;
         widgetData.playlistData.playlistSrc = playlistSrc;
+        widgetData.playlistData.playlistArtSrc = playlistAlbumArtSrc;
 
         if (data.item != null && playlistContents != null) {
           const trackUri = data.item.uri;
@@ -115,6 +127,16 @@ export function UriToPathname(rawUri: string): string {
  */
 export function isLikedSongsPlaylist(contextUri: string) {
   return contextUri.endsWith("collection"); // FIXME maybe come up with a better solution (although this does suffice)
+}
+
+/**
+ * Checks whether the given context URI is a folder.
+ * 
+ * This is needed because folders use a different URI format.
+ * 
+ */
+export function isFolder(contextUri: string) {
+  return contextUri.match("folder"); // FIXME maybe come up with a better solution (although this does suffice)
 }
 
 /**

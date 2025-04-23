@@ -4,7 +4,6 @@ import { GenerateWidgetData } from "../../lib/APIWrapper";
 import type { WidgetData } from "../../types/extension/WidgetData";
 import useClassNames from "../../hooks/useClassNames";
 
-import { LikedSongsIcon } from "../../../assets/LikedSongsIcon";
 import "./Widget.css";
 
 interface WidgetProps {
@@ -36,6 +35,18 @@ export default function Widget({ open, peek, playerState }: WidgetProps) {
   const playlistComponent = (() => {
     if (!widgetData || !widgetData.playlistData || !widgetData.playlistData.playlistTitle || widgetData.playlistData.playlistTitle.length < 1) return null;
 
+    const playlistAlbumArtComponent = () => {
+      if (typeof(widgetData.playlistData.playlistArtSrc) == "string" && widgetData.playlistData.playlistArtSrc.length > 0) {
+        return (<img className="Avatar" src={widgetData.playlistData.playlistArtSrc} width={24} height={24} />)
+      }
+      if (React.isValidElement(widgetData.playlistData.playlistArtSrc)) {
+        /* @ts-ignore */
+        const img = React.cloneElement(widgetData.playlistData.playlistArtSrc, { className: `${widgetData.playlistData.playlistArtSrc.props.className} Avatar` });
+        return img;
+      }
+      return null;
+    }
+
     const playlistAnchorLink = () => {
       if (widgetData.playlistData.playlistSrc.length < 1) {
         return (<a className="EmphasisText">{widgetData.playlistData.playlistTitle}</a>);
@@ -46,6 +57,7 @@ export default function Widget({ open, peek, playerState }: WidgetProps) {
     return (
       <div className="WhoAddedPlaylistContainer">
         <h5 className="DullText">From</h5>
+        {playlistAlbumArtComponent()}
         <h5>{playlistAnchorLink()}</h5>
       </div>
     );
