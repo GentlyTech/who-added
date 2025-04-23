@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { GenerateWidgetData } from "../../lib/APIWrapper";
 
-import type { WidgetData } from "../../types/extension/lib";
+import type { WidgetData } from "../../types/extension/WidgetData";
 import useClassNames from "../../hooks/useClassNames";
 
 import { LikedSongsIcon } from "../../../assets/LikedSongsIcon";

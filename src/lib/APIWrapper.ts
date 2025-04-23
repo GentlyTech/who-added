@@ -4,7 +4,7 @@ import type {
   PlatformTrack,
   RESTUserInfo,
 } from "../types/extension/API";
-import type { WidgetData } from "../types/extension/lib";
+import type { WidgetData } from "../types/extension/WidgetData";
 
 import { EXTENSION_NAME } from "./Globals";
 
