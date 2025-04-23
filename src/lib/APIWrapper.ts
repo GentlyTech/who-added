@@ -48,8 +48,6 @@ export async function GenerateWidgetData(
 
       if (isFolder(contextUri)) { // Short circuit if playlist is a folder
         // TODO actually populate with respective folder's data
-        widgetData.playlistData.playlistTitle = "Folder";
-        widgetData.playlistData.playlistSrc = UriToPathname(contextUri);
         return widgetData;
       }
 
