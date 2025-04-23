@@ -417,6 +417,7 @@ declare namespace Spicetify {
       canGo: (p0?) => any;
       block: () => any;
       listen: (p0?) => any;
+      push: (path: string) => void;
     };
     AdManagers: {
       config: {
