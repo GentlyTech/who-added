@@ -1,8 +1,10 @@
 import manifest from "../../package.json";
 
-export const BUTTON_INJECTION_TARGET: string = ".main-nowPlayingWidget-nowPlaying"; // The selector type is needed (e.g. period for classname and hashtag for id)
-export const WIDGET_INJECTION_TARGET: string = ".main-navBar-mainNav"; // The selector type is needed (e.g. period for classname and hashtag for id)
-export const PEEK_DETECTION_TARGET: string = ".main-yourLibraryX-libraryItemContainer"; // The selector type is needed (e.g. period for classname and hashtag for id)
+// The selector type is needed for the following statements (e.g. period for classname and hashtag for id)
+export const BUTTON_INJECTION_TARGET: string = ".main-nowPlayingWidget-nowPlaying"; 
+export const WIDGET_INJECTION_TARGET_NORMAL: string = ".main-navBar-mainNav";
+export const WIDGET_INJECTION_TARGET_FULLSCREEN: string = "#VideoPlayerCinema_ReactPortal";
+export const PEEK_DETECTION_TARGET: string = ".main-yourLibraryX-libraryItemContainer";
 
 export const MAX_TRIES: number = 10;
 export const EXTENSION_NAME: string = manifest.name;

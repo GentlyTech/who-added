@@ -1,7 +1,7 @@
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, PEEK_DETECTION_TARGET, WIDGET_INJECTION_TARGET } from "./lib/Globals";
+import { BUTTON_INJECTION_TARGET, EXTENSION_NAME, MAX_TRIES, PEEK_DETECTION_TARGET, WIDGET_INJECTION_TARGET_FULLSCREEN, WIDGET_INJECTION_TARGET_NORMAL } from "./lib/Globals";
 import { InfoIcon } from "../assets/InfoIcon";
 import Widget from "./components/Widget/Widget";
 import { Settings } from "./lib/Settings";
@@ -12,6 +12,7 @@ import "./styles/colors.css";
 function App() {
   const [open, setOpen] = useState<boolean>(true);
   const [peek, setPeek] = useState<boolean>(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const [playerState, setPlayerState] = useState<Spicetify.PlayerState | undefined>(Spicetify.Player.data);
   const toggleButtonRef: MutableRefObject<HTMLButtonElement | null> = useRef(null);
   const injectionTargetRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
@@ -22,8 +23,20 @@ function App() {
       setPlayerState(event?.data);
     });
 
+    const observer = new MutationObserver((mutationList, observer) => {
+      for (const record of mutationList) {
+        if (record.type == "attributes" && record.attributeName == "class") {
+          const isFullscreen: boolean = document.querySelector(".fullscreen") != null;
+          setFullscreen(isFullscreen);
+        }
+      }
+    });
+
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"], childList: false, subtree: false })
+
     return () => {
       Spicetify.Player.removeEventListener("songchange", () => {});
+      observer.disconnect();
     }
   });
 
@@ -37,7 +50,7 @@ function App() {
       setPeek(event.type == "mouseenter");
     }
 
-    const injectionTarget: HTMLDivElement | null = document.querySelector(WIDGET_INJECTION_TARGET);
+    const injectionTarget: HTMLDivElement | null = fullscreen ? (document.querySelector(WIDGET_INJECTION_TARGET_FULLSCREEN)?.parentElement as unknown as HTMLDivElement) || null : document.querySelector(WIDGET_INJECTION_TARGET_NORMAL);
     if (injectionTarget != null) {
       injectionTargetRef.current = injectionTarget;
     }
@@ -58,7 +71,7 @@ function App() {
       }
       peekDetectionTargetRef.current = null;
     }
-  });
+  }, [fullscreen]);
 
   function onToggleButtonClick(event: React.MouseEvent<HTMLButtonElement>) {
     setOpen(!open);
@@ -66,7 +79,7 @@ function App() {
 
   return (
     <>
-      {injectionTargetRef.current != null ? createPortal(<Widget open={open} peek={peek} playerState={playerState} />, injectionTargetRef.current) : null}
+      {injectionTargetRef.current != null ? createPortal(<Widget open={open} fullscreen={fullscreen} peek={peek} playerState={playerState} />, injectionTargetRef.current) : null}
       <button ref={toggleButtonRef} className="ToggleButton" onClick={onToggleButtonClick}>{InfoIcon}</button>
     </>
   );

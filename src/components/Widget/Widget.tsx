@@ -9,11 +9,12 @@ import "./Widget.css";
 interface WidgetProps {
   open: boolean;
   peek?: boolean;
+  fullscreen?: boolean;
   playerState?: Spicetify.PlayerState;
 }
 
-export default function Widget({ open, peek, playerState }: WidgetProps) {
-  const classNames = useClassNames("WhoAddedWidgetContainer", peek ? "SeeThrough" : undefined);
+export default function Widget({ open, fullscreen, peek, playerState }: WidgetProps) {
+  const classNames = useClassNames("WhoAddedWidgetContainer", peek ? "SeeThrough" : undefined, fullscreen ? "FullscreenAnchor" : "NormalAnchor");
   const [widgetData, updateWidgetData] = useState(undefined as unknown as WidgetData);
 
   useEffect(() => {
