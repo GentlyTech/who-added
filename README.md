@@ -22,6 +22,6 @@ npm run build-local
 ## TODO
 
 - [] Remember whether widget should be open or not on app launch
-- [] Fix data retrieval when song is played from "Liked Songs" playlist
+- [X] Fix data retrieval when song is played from "Liked Songs" playlist
 - [] Fix data retrieval when song is quick-played via folder
 - [] Add full screen support
