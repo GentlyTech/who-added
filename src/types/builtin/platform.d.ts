@@ -2557,7 +2557,7 @@ declare namespace Spicetify {
       getCapabilities: () => any;
       getEvents: () => any;
       getPlaylist: (p0?, p1?, p2?) => any;
-      getContents: (p0?, p1??) => any;
+      getContents: (p0?, p1?) => any;
       getMetadata: (p0?, p1?) => any;
       resync: (p0?, p1?) => any;
       add: (p0?, p1?, p2?, p3?) => any;
