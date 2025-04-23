@@ -86,7 +86,7 @@ export default function Widget({ open, peek, playerState }: WidgetProps) {
   const result = () => {
     if (!playlistComponent && !culpritComponent) {
       return (
-        <div className="DullText Error">
+        <div className="DullText">
           No information for this track.
         </div>
       );
